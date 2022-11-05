@@ -37,3 +37,4 @@ def analyse_move(user_input):
     if deconstructed_input["letter"] == '':
         deconstructed_input["letter"] = 'P'                             # this must be a pawn
     return deconstructed_input
+

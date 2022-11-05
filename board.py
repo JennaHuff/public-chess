@@ -1,5 +1,5 @@
 import math
-import NewPiece
+#import NewPiece
 
 
 # two attempts at creating a board: a dictionary with 64 entries, and an 8x8 2d array
@@ -30,6 +30,7 @@ def display_board(dictionary):
     for j in range(8):
         column = []
         for i in range(8):
+            print(i, j)
             column.append('')
         board.append(column)
     return board
@@ -40,7 +41,7 @@ def create():               # creates an 8x8 2d array
     for j in range(8):
         column = []
         for i in range(8):
-            column.append('')
+            column.append(' ')
         board.append(column)
     return board
 
