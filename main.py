@@ -14,8 +14,6 @@ def create_board():
         board.append(ligne)
     return board
     
-
-
 def display_board(board, pieces):      #  pieces = [[0, 1, "W"], [2, 3, "B"]]
     tmp = copy.deepcopy(board)
 
@@ -26,43 +24,51 @@ def display_board(board, pieces):      #  pieces = [[0, 1, "W"], [2, 3, "B"]]
     for lign in tmp:
         print('  '.join(lign))
 
+def place_pawns(arr):
+    
+    w_y, b_y = 1, 6
+
+    for w_x in range(8):
+        wp = [w_x, w_y, "WP"]
+        arr.append(wp)
+
+    for b_x in range(8):
+        bp = [b_x, b_y, "BP"]
+        arr.append(bp)
+
+def place_queens(arr):
+    w_y = 0
+    for w_x in range(8):
+        wq = [w_x, w_y, "WQ"]
+        arr.append(wq)
+
+def is_square_free(x, y, arr):
+    for piece in arr:
+        if piece[0] == x and piece[1] == y:
+            print("not free")
+            return 0
+    print("free")
+    return 1
 
 bd = create_board()
 
-w_y, b_y = 0, 7
-
 piece_arr = []
-
-for w_x in range(8):
-    wp = [w_x, w_y, "WP"]
-    piece_arr.append(wp)
-
-for b_x in range(8):
-    bp = [b_x, b_y, "BP"]
-    piece_arr.append(bp)
-
-
+place_pawns(piece_arr)
+place_queens(piece_arr)
 
 
 while True:
     display_board(bd, piece_arr)
-    move = input("Pick a square")
-    proper_column = ord(move[0]) - 97 # gives the column in which to check for pawns
-    human_move = int(move[1]) - 1
-    colision_counter = 0
+    move = input("Move it")
 
+    start_x = move[0]
+    start_y = move[1]
+    end_x = move[2]
+    end_y = move[3]
 
     for piece in piece_arr:
-        if piece[0] == proper_column and (piece[1] == human_move - 1 or piece[1] == human_move + 1):
-            print(f"found the {piece[2]} pawn")
-            if piece[2][0] == "W" and piece[1] < human_move:
-                piece[1] += 1
-                colision_counter += 1
-            if piece[2][0] == "B" and piece[1] > human_move:
-                piece[1] -= 1
-                colision_counter += 1
-        if colision_counter > 1:
-            piece[2] = "#"
-            colision_counter = 0
+        if piece[0] == ord(start_x) - 97 and piece[1] == int(start_y) - 1 and is_square_free(ord(end_x) - 97, int(end_y) - 1, piece_arr):
+            piece[0] = ord(end_x) - 97
+            piece[1] = int(end_y) - 1
 
 
