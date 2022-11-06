@@ -2,11 +2,14 @@ import math
 
 
 def get_coordinate(index):
-    number = int(math.ceil(index / 8))
-    letter = chr(ord('h') - int(number * 8 - index))
+    number = math.ceil(index / 8)
+    letter = chr(ord('a') + index % 8)
+
     coordinate = letter + str(number)
     return coordinate
-    # print(f"{letter}{number}")
+
+
+print(get_coordinate(0))
 
 
 def get_index(coordinate):
