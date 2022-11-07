@@ -29,11 +29,11 @@ def place_pawns(arr):
     w_y, b_y = 1, 6
 
     for w_x in range(8):
-        wp = [w_x, w_y, "♙", ["v"], 1]
+        wp = [w_x, w_y, "♙", ["v"], 2]
         arr.append(wp)
 
     for b_x in range(8):
-        bp = [b_x, b_y, "♟", ["v"], 1]
+        bp = [b_x, b_y, "♟", ["v"], 2]
         arr.append(bp)
 
 def place_rooks(arr):
@@ -133,7 +133,25 @@ def how_far_diagonal(start_position, end_position):
     else:
         return 0
 
+def is_knight_move(start_pos, end_pos):
+
+    max_col = max(ord(start_pos[0]) - 97, ord(end_pos[0]) - 97)
+    max_row = max(start_pos[1], end_pos[1])
+
+    min_col = min(ord(start_pos[0]) - 97, ord(end_pos[0]) - 97)
+    min_row = min(start_pos[1], end_pos[1])
+
+    if max_col - min_col == 1:
+        if int(max_row) - int(min_row) == 2:
+            return 1
+    if max_col - min_col == 2:
+        if int(max_row) - int(min_row) == 1:
+            return 1
+    return 0
+
 def what_trajectory(start_pos, end_pos):
+    if is_knight_move(start_pos, end_pos):
+        return("k", 1)
     if how_far_x(start_pos, end_pos):
         return ("h", how_far_x(start_pos, end_pos))
     if how_far_y(start_pos, end_pos):
@@ -165,12 +183,16 @@ while True:
     start_pos = start_x + start_y
     end_pos = end_x + end_y
 
+    print(is_knight_move(start_pos, end_pos))
+
     for piece in piece_arr:
         if piece[0] == ord(start_x) - ord('a') and piece[1] == int(start_y) - 1: # checks if a piece is on start square
             if is_square_free(ord(end_x) - ord('a'), int(end_y) - 1, piece_arr):  # checks if the end square is free
                 if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]:
                     piece[0] = ord(end_x) - 97
                     piece[1] = int(end_y) - 1
+                    if piece[2] == "♙" or piece[2] == "♟":
+                        piece[4] = 1
                 else:
                     print("that piece does not move like that")
 
