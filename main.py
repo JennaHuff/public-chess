@@ -4,13 +4,13 @@ def create_board():
     board = []
     for i in range(8):
         ligne = []
-        for j in range(8):        
+        for j in range(8):
             if j % 2 == i % 2:
                 #ligne.append(f"{chr(j + 97)}{i + 1}")
-                ligne.append("X")
+                ligne.append("#")
             else:
                 #ligne.append(f"{chr(j + 97)}{i + 1}")
-                ligne.append("O")
+                ligne.append(" ")
         board.append(ligne)
     return board
     
@@ -208,5 +208,3 @@ while True:
 
                 else:
                     print("that piece does not move like that")
-
-
