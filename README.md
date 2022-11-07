@@ -8,4 +8,5 @@ Je veux afficher un pion sur le damier
 Je peux deplacer un pion
 Je veux deplacer 2 pions de camp opposé
 ...
+
 je peux jouer aux echecs
