@@ -189,10 +189,23 @@ while True:
         if piece[0] == ord(start_x) - ord('a') and piece[1] == int(start_y) - 1: # checks if a piece is on start square
             if is_square_free(ord(end_x) - ord('a'), int(end_y) - 1, piece_arr):  # checks if the end square is free
                 if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]:
+                    if piece[2] == "♙":
+                        if end_y > start_y:
+                            piece[0] = ord(end_x) - 97
+                            piece[1] = int(end_y) - 1
+                            piece[4] = 1
+                        else:
+                            break
+                    if piece[2] == "♟":
+                        if end_y < start_y:
+                            piece[0] = ord(end_x) - 97
+                            piece[1] = int(end_y) - 1
+                            piece[4] = 1
+                        else:
+                            break
                     piece[0] = ord(end_x) - 97
                     piece[1] = int(end_y) - 1
-                    if piece[2] == "♙" or piece[2] == "♟":
-                        piece[4] = 1
+
                 else:
                     print("that piece does not move like that")
 
