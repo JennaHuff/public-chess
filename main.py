@@ -183,11 +183,33 @@ place_knights(piece_arr)
 place_bishops(piece_arr)
 place_kings(piece_arr)
 
+def get_command():
+    while True:
+        move = input("Move it")
+        x1 = move[0]
+        y1 = move[1]
+        x2 = move[2]
+        y2 = move[3]
+        try:
+            y1 = int(y1)
+            y2 = int(y2)
+        except:
+            print('Input should look like this: "a1h8"')
+            continue
+        if y1 < 1 or y1 > 8 or y2 < 1 or y2 > 8:
+            print("Rows are within 1 and 8")
+            continue
+        if x1 < 'a' or x1 > 'h' or x2 < 'a' or x2 > 'h':
+            print("Columns are between A and H")
+            continue
+        break
+    return(move)
+
 while True:
     display_board(bd, piece_arr)
 
+    move = get_command()
 
-    move = input("Move it")
 
     start_x = ord(move[0]) - ord('a')
     start_y = int(move[1]) - 1
@@ -225,5 +247,5 @@ while True:
                     print("trajectory not free")
             else:
                 print("square not free")
-    print(f"White cemetery: {dead_white_pieces} '\n' Black cemetery: {dead_black_pieces}")
+    print(f"White cemetery: {dead_white_pieces} \nBlack cemetery: {dead_black_pieces}")
 
