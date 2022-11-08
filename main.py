@@ -1,5 +1,8 @@
 import copy
 
+dead_white_pieces = []
+dead_black_pieces = []
+
 def create_board(): 
     board = []
     for i in range(8):
@@ -29,19 +32,19 @@ def place_pawns(arr):
     w_y, b_y = 1, 6
 
     for w_x in range(8):
-        wp = [w_x, w_y, "♙", ["v"], 2]
+        wp = [w_x, w_y, "♙", ["v"], 2, 1] # 2 = range, 1 = white
         arr.append(wp)
 
     for b_x in range(8):
-        bp = [b_x, b_y, "♟", ["v"], 2]
+        bp = [b_x, b_y, "♟", ["v"], 2, 2]
         arr.append(bp)
 
 def place_rooks(arr):
 
-    wr = [0, 0, "♖", ["h", "v"], 7]
-    wr2 = [7, 0, "♖", ["h", "v"], 7]
-    br = [0, 7, "♜", ["h", "v"], 7]
-    br2 = [7, 7, "♜", ["h", "v"], 7]
+    wr = [0, 0, "♖", ["h", "v"], 7, 1]
+    wr2 = [7, 0, "♖", ["h", "v"], 7, 1]
+    br = [0, 7, "♜", ["h", "v"], 7, 2]
+    br2 = [7, 7, "♜", ["h", "v"], 7, 2]
     arr.append(wr)
     arr.append(wr2)
     arr.append(br)
@@ -49,10 +52,10 @@ def place_rooks(arr):
 
 def place_knights(arr):
 
-    wr = [1, 0, "♘", ["k"], 1]
-    wr2 = [6, 0, "♘", ["k"], 1]
-    br = [1, 7, "♞", ["k"], 1]
-    br2 = [6, 7, "♞", ["k"], 1]
+    wr = [1, 0, "♘", ["k"], 1, 1]
+    wr2 = [6, 0, "♘", ["k"], 1, 1]
+    br = [1, 7, "♞", ["k"], 1, 2]
+    br2 = [6, 7, "♞", ["k"], 1, 2]
     arr.append(wr)
     arr.append(wr2)
     arr.append(br)
@@ -60,31 +63,38 @@ def place_knights(arr):
 
 def place_bishops(arr):
 
-    wr = [2, 0, "♗", ["d"], 7]
-    wr2 = [5, 0, "♗", ["d"], 7]
-    br = [2, 7, "♝", ["d"], 7]
-    br2 = [5, 7, "♝", ["d"], 7]
+    wr = [2, 0, "♗", ["d"], 7, 1]
+    wr2 = [5, 0, "♗", ["d"], 7, 1]
+    br = [2, 7, "♝", ["d"], 7, 2]
+    br2 = [5, 7, "♝", ["d"], 7, 2]
     arr.append(wr)
     arr.append(wr2)
     arr.append(br)
     arr.append(br2)
 
 def place_queens(arr):
-    wq = [3, 0, "♕", ["h", "v", "d"], 7]
-    bq = [3, 7, "♛", ["h", "v", "d"], 7]
+    wq = [3, 0, "♕", ["h", "v", "d"], 7, 1]
+    bq = [3, 7, "♛", ["h", "v", "d"], 7, 2]
     arr.append(wq)
     arr.append(bq)
 
 def place_kings(arr):
-    wk = [4, 0, "♔", ["h", "v", "d"], 1]
-    bk = [4, 7, "♚", ["h", "v", "d"], 1]
+    wk = [4, 0, "♔", ["h", "v", "d"], 1, 1]
+    bk = [4, 7, "♚", ["h", "v", "d"], 1, 2]
     arr.append(wk)
     arr.append(bk)
 
-def is_square_free(x, y, arr):
+def is_square_free(x, y, arr, moving_piece):
     for piece in arr:
         if piece[0] == x and piece[1] == y:
-            print("Square is not free")
+            if piece[5] != moving_piece[5]:
+                print(f"{moving_piece[2]} takes {piece[2]}")
+                if piece[5] == 1:
+                    dead_white_pieces.append(piece[2])
+                else:
+                    dead_black_pieces.append(piece[2])
+                arr.remove(piece)
+                return 1
             return 0
     return 1
 
@@ -141,13 +151,14 @@ def is_way_free(start_pos, end_pos, arr):
     if traj[0] == "v":
         for piece in arr:
             if piece[0] == end_pos[0] and piece[1] > smallest_y and piece[1] < biggest_y:
-                print("vertical trajectory not free")
+                print("vertical not free")
                 return 0
         return 1
     if traj[0] == "h":
         for piece in arr:
             if piece[1] == biggest_y and piece[0] > smallest_x and piece[0] < biggest_x:
-                print("horizontal trajectory not free")
+                print("horizontal not free")
+                print(f"piece captures {piece[2]}")
                 return 0
         return 1
     if traj[0] == "d":
@@ -156,7 +167,8 @@ def is_way_free(start_pos, end_pos, arr):
             piece_coords.append(piece[0])
             piece_coords.append(piece[1])
             if how_far_diagonal(piece_coords, start_pos) and how_far_diagonal(piece_coords, end_pos) and piece[0] > smallest_x and piece[0] < biggest_x:
-                print("trajectory not free")
+                print("diagonal not free")
+                print(f"piece captures {piece[2]}")
                 return 0
         return 1
 
@@ -174,6 +186,7 @@ place_kings(piece_arr)
 while True:
     display_board(bd, piece_arr)
 
+
     move = input("Move it")
 
     start_x = ord(move[0]) - ord('a')
@@ -184,11 +197,11 @@ while True:
     start_pos = (start_x, start_y)
     end_pos = (end_x, end_y)
 
-
+    print(len(piece_arr))
     for piece in piece_arr:
         if piece[0] == start_x and piece[1] == start_y: # checks if a piece is on start square
-            if is_square_free(end_x, end_y, piece_arr):  # checks if the end square is free
-                if is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘": #checks if trajectory is free or piece = k
+            if is_square_free(end_x, end_y, piece_arr, piece):  # checks if the end square is free
+                if is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘" : #checks if trajectory is free or piece = k
                     if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]:
                         if piece[2] == "♙":
                             if end_y > start_y:
@@ -206,6 +219,11 @@ while True:
                                 break
                         piece[0] = end_x
                         piece[1] = end_y
-
                     else:
-                        print("that piece does not move like that")
+                        print("that piece does not move like that, or that far")
+                else:
+                    print("trajectory not free")
+            else:
+                print("square not free")
+    print(f"White cemetery: {dead_white_pieces} '\n' Black cemetery: {dead_black_pieces}")
+
