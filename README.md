@@ -10,3 +10,12 @@ Je veux deplacer 2 pions de camp opposé
 ...
 
 je peux jouer aux echecs
+
+D # # # # # # #
+# # # # # # # #
+# # # # # # # #
+# # # # # # # #
+# # # # # # # #
+# # # # # # # #
+# # # # # # A #
+# # # # # # # #

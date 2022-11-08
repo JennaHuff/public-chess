@@ -7,7 +7,7 @@ def create_board():
         for j in range(8):
             if j % 2 == i % 2:
                 #ligne.append(f"{chr(j + 97)}{i + 1}")
-                ligne.append("#")
+                ligne.append("+")
             else:
                 #ligne.append(f"{chr(j + 97)}{i + 1}")
                 ligne.append(" ")
@@ -88,64 +88,35 @@ def is_square_free(x, y, arr):
             return 0
     return 1
 
-def how_far_x(start_position, end_position):
-    if len(start_position) != 2 or start_position[0].isalpha() == False or start_position[1].isdigit() == False:
-        return "invalid start coordinate"
-    if len(end_position) != 2 or end_position[0].isalpha() == False or end_position[1].isdigit() == False:
-        return "invalid end coordinate"
-
-    nb_of_steps = ord(max(start_position[0], end_position[0])) - ord(min(start_position[0], end_position[0]))
-
-    if end_position[1] == start_position[1]:
+def how_far_x(start_pos, end_pos):
+    if start_pos[1] == end_pos[1]:
+        nb_of_steps = abs(start_pos[0] - end_pos[0])
         return nb_of_steps
     else:
         return 0
 
-def how_far_y(start_position, end_position):
-    if len(start_position) != 2 or start_position[0].isalpha() == False or start_position[1].isdigit() == False:
-        return "invalid start coordinate"
-    if len(end_position) != 2 or end_position[0].isalpha() == False or end_position[1].isdigit() == False:
-        return "invalid end coordinate"
-
-    nb_of_steps = ord(max(start_position[1], end_position[1])) - ord(min(start_position[1], end_position[1]))
-
-    if end_position[0] == start_position[0]:
+def how_far_y(start_pos, end_pos):
+    if end_pos[0] == start_pos[0]:
+        nb_of_steps = abs(start_pos[1] - end_pos[1])
         return nb_of_steps
     else:
         return 0
 
-def how_far_diagonal(start_position, end_position):
-    if len(start_position) != 2 or start_position[0].isalpha() == False or start_position[1].isdigit() == False:
-        return "invalid start coordinate"
-    if len(end_position) != 2 or end_position[0].isalpha() == False or end_position[1].isdigit() == False:
-        return "invalid end coordinate"
-
-    biggest_x_coord = ord(max(start_position[0], end_position[0]))
-    smallest_x_coord = ord(min(start_position[0], end_position[0]))
-    biggest_y_coord = max(start_position[1], end_position[1])
-    smallest_y_coord = min(start_position[1], end_position[1])
-
-    x_substraction = int(biggest_x_coord) - int(smallest_x_coord)
-    y_substraction = int(biggest_y_coord) - int(smallest_y_coord)
-
-    if x_substraction == y_substraction:
-        return x_substraction
+def how_far_diagonal(start_pos, end_pos):
+    x_compare = abs(start_pos[0] - end_pos[0])
+    y_compare = abs(start_pos[1] - end_pos[1])
+    if x_compare == y_compare:
+        nb_of_steps = x_compare
+        return nb_of_steps
     else:
         return 0
 
 def is_knight_move(start_pos, end_pos):
-
-    max_col = max(ord(start_pos[0]) - 97, ord(end_pos[0]) - 97)
-    max_row = max(start_pos[1], end_pos[1])
-
-    min_col = min(ord(start_pos[0]) - 97, ord(end_pos[0]) - 97)
-    min_row = min(start_pos[1], end_pos[1])
-
-    if max_col - min_col == 1:
-        if int(max_row) - int(min_row) == 2:
+    if abs(start_pos[0] - end_pos[0]) == 1:
+        if abs(start_pos[1] - end_pos[1]) == 2:
             return 1
-    if max_col - min_col == 2:
-        if int(max_row) - int(min_row) == 1:
+    if abs(start_pos[0] - end_pos[0]) == 2:
+        if abs(start_pos[1] - end_pos[1]) == 1:
             return 1
     return 0
 
@@ -159,6 +130,36 @@ def what_trajectory(start_pos, end_pos):
     if how_far_diagonal(start_pos, end_pos):
         return ("d", how_far_diagonal(start_pos, end_pos))
     return "not a move"
+
+def is_way_free(start_pos, end_pos, arr):
+    traj = what_trajectory(start_pos, end_pos)  # ex: ("v", 5)
+    biggest_y = int(max(start_pos[1], end_pos[1]))
+    smallest_y = int(min(start_pos[1], end_pos[1]))
+    biggest_x = max(start_pos[0], end_pos[0])
+    smallest_x = min(start_pos[0], end_pos[0])
+
+    if traj[0] == "v":
+        for piece in arr:
+            if piece[0] == end_pos[0] and piece[1] > smallest_y and piece[1] < biggest_y:
+                print("vertical trajectory not free")
+                return 0
+        return 1
+    if traj[0] == "h":
+        for piece in arr:
+            if piece[1] == biggest_y and piece[0] > smallest_x and piece[0] < biggest_x:
+                print("horizontal trajectory not free")
+                return 0
+        return 1
+    if traj[0] == "d":
+        for piece in arr:
+            piece_coords = []
+            piece_coords.append(piece[0])
+            piece_coords.append(piece[1])
+            if how_far_diagonal(piece_coords, start_pos) and how_far_diagonal(piece_coords, end_pos) and piece[0] > smallest_x and piece[0] < biggest_x:
+                print("trajectory not free")
+                return 0
+        return 1
+
 
 bd = create_board()
 
@@ -175,36 +176,36 @@ while True:
 
     move = input("Move it")
 
-    start_x = move[0]
-    start_y = move[1]
-    end_x = move[2]
-    end_y = move[3]
+    start_x = ord(move[0]) - ord('a')
+    start_y = int(move[1]) - 1
+    end_x = ord(move[2]) - ord('a')
+    end_y = int(move[3]) - 1
 
-    start_pos = start_x + start_y
-    end_pos = end_x + end_y
+    start_pos = (start_x, start_y)
+    end_pos = (end_x, end_y)
 
-    print(is_knight_move(start_pos, end_pos))
 
     for piece in piece_arr:
-        if piece[0] == ord(start_x) - ord('a') and piece[1] == int(start_y) - 1: # checks if a piece is on start square
-            if is_square_free(ord(end_x) - ord('a'), int(end_y) - 1, piece_arr):  # checks if the end square is free
-                if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]:
-                    if piece[2] == "♙":
-                        if end_y > start_y:
-                            piece[0] = ord(end_x) - 97
-                            piece[1] = int(end_y) - 1
-                            piece[4] = 1
-                        else:
-                            break
-                    if piece[2] == "♟":
-                        if end_y < start_y:
-                            piece[0] = ord(end_x) - 97
-                            piece[1] = int(end_y) - 1
-                            piece[4] = 1
-                        else:
-                            break
-                    piece[0] = ord(end_x) - 97
-                    piece[1] = int(end_y) - 1
+        if piece[0] == start_x and piece[1] == start_y: # checks if a piece is on start square
+            if is_square_free(end_x, end_y, piece_arr):  # checks if the end square is free
+                if is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘": #checks if trajectory is free or piece = k
+                    if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]:
+                        if piece[2] == "♙":
+                            if end_y > start_y:
+                                piece[0] = end_x
+                                piece[1] = end_y
+                                piece[4] = 1
+                            else:
+                                break
+                        if piece[2] == "♟":
+                            if end_y < start_y:
+                                piece[0] = end_x
+                                piece[1] = end_y
+                                piece[4] = 1
+                            else:
+                                break
+                        piece[0] = end_x
+                        piece[1] = end_y
 
-                else:
-                    print("that piece does not move like that")
+                    else:
+                        print("that piece does not move like that")
