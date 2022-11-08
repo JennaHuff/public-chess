@@ -11,11 +11,6 @@ Je veux deplacer 2 pions de camp opposé
 
 je peux jouer aux echecs
 
-D # # # # # # #
-# # # # # # # #
-# # # # # # # #
-# # # # # # # #
-# # # # # # # #
-# # # # # # # #
-# # # # # # A #
-# # # # # # # #
+les pieces peuvent manger meme si elles ne peuvent pas aller sur la case :S
+les pions peuvent manger a la verticale
+
