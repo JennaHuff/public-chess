@@ -54,25 +54,25 @@ def place_rooks(arr):
 
 def place_knights(arr):
 
-    wr = [1, 0, "♘", ["k"], 1, 1]
-    wr2 = [6, 0, "♘", ["k"], 1, 1]
-    br = [1, 7, "♞", ["k"], 1, 2]
-    br2 = [6, 7, "♞", ["k"], 1, 2]
-    arr.append(wr)
-    arr.append(wr2)
-    arr.append(br)
-    arr.append(br2)
+    wk = [1, 0, "♘", ["k"], 1, 1]
+    wk2 = [6, 0, "♘", ["k"], 1, 1]
+    bk = [1, 7, "♞", ["k"], 1, 2]
+    bk2 = [6, 7, "♞", ["k","v"], 1, 2]
+    arr.append(wk)
+    arr.append(wk2)
+    arr.append(bk)
+    arr.append(bk2)
 
 def place_bishops(arr):
 
-    wr = [2, 0, "♗", ["d"], 7, 1]
-    wr2 = [5, 0, "♗", ["d"], 7, 1]
-    br = [2, 7, "♝", ["d"], 7, 2]
-    br2 = [5, 7, "♝", ["d"], 7, 2]
-    arr.append(wr)
-    arr.append(wr2)
-    arr.append(br)
-    arr.append(br2)
+    wb = [2, 0, "♗", ["d"], 7, 1]
+    wb2 = [5, 0, "♗", ["d"], 7, 1]
+    bb = [2, 7, "♝", ["d"], 7, 2]
+    bb2 = [5, 7, "♝", ["d"], 7, 2]
+    arr.append(wb)
+    arr.append(wb2)
+    arr.append(bb)
+    arr.append(bb2)
 
 def place_queens(arr):
     wq = [3, 0, "♕", ["h", "v", "d"], 7, 1]
@@ -227,9 +227,9 @@ while True:
 
     for piece in piece_arr:
         if piece[0] == start_x and piece[1] == start_y: # checks if a piece is on start square
-            if is_square_free(end_x, end_y, piece_arr, piece):  # checks if the end square is free
-                if is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘" : #checks if trajectory is free or piece = k
-                    if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]:
+            if is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘" or piece[2] == "♞" : #checks if trajectory is free or piece = k
+                if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]: # checks if the piece can move in such a way
+                    if is_square_free(end_x, end_y, piece_arr, piece):  # checks if the end square is free
                         if piece[2] == "♙":
                             if end_y > start_y:
                                 piece[0] = end_x
@@ -240,7 +240,6 @@ while True:
                                     piece_arr.remove(piece)
                                     piece = [end_x, end_y, "♕", ["h", "v", "d"], 7, 1]
                                     piece_arr.append(piece)
-                                    print(piece)
                             else:
                                 break
                         if piece[2] == "♟":
@@ -256,9 +255,7 @@ while True:
                                 break
                         piece[0] = end_x
                         piece[1] = end_y
-                    else:
-                        print("that piece does not move like that, or that far")
-            else:
-                print("square not free")
+                else:
+                    print("that piece does not move like that, or that far")
     print(f"White cemetery: {' '.join(dead_white_pieces)}\nBlack cemetery: {' '.join(dead_black_pieces)}")
 
