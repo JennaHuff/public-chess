@@ -1,9 +1,13 @@
 import copy
 import os
+import place_piece
+import how_far
+
 
 
 dead_white_pieces = []
 dead_black_pieces = []
+
 
 def create_board(): 
     board = []
@@ -18,7 +22,7 @@ def create_board():
                 ligne.append(" ")
         board.append(ligne)
     return board
-    
+
 def display_board(board, pieces):      #  pieces = [[0, 1, "W"], [2, 3, "B"]]
     tmp = copy.deepcopy(board)
 
@@ -29,62 +33,31 @@ def display_board(board, pieces):      #  pieces = [[0, 1, "W"], [2, 3, "B"]]
     for lign in tmp:
         print('  '.join(lign))
 
-def place_pawns(arr):
-    
-    w_y, b_y = 1, 6
+def count_score(arr):
+    score = 0
 
-    for w_x in range(8):
-        wp = [w_x, w_y, "♙", ["v"], 2, 1] # 2 = range, 1 = white
-        arr.append(wp)
+    for piece in arr:
+        if piece == "♙" or piece == "♟":
+            score += 1
+        if piece == "♖" or piece == "♜":
+            score += 5            
+        if piece == "♘" or piece == "♞":
+            score += 3
+        if piece == "♗" or piece == "♝":
+            score += 3
+        if piece == "♕" or piece == "♛":
+            score += 9
 
-    for b_x in range(8):
-        bp = [b_x, b_y, "♟", ["v"], 2, 2]
-        arr.append(bp)
+    return score
 
-def place_rooks(arr):
+def compare_scores(num_1, num_2):
+    if num_1 == num_2:
+        return f"  ", f"  "
+    if num_1 > num_2:
+        return f"+{num_1 - num_2}", "  "
+    else:
+        return "  ", f"+{num_2 - num_1}"
 
-    wr = [0, 0, "♖", ["h", "v"], 7, 1]
-    wr2 = [7, 0, "♖", ["h", "v"], 7, 1]
-    br = [0, 7, "♜", ["h", "v"], 7, 2]
-    br2 = [7, 7, "♜", ["h", "v"], 7, 2]
-    arr.append(wr)
-    arr.append(wr2)
-    arr.append(br)
-    arr.append(br2)
-
-def place_knights(arr):
-
-    wk = [1, 0, "♘", ["k"], 1, 1]
-    wk2 = [6, 0, "♘", ["k"], 1, 1]
-    bk = [1, 7, "♞", ["k"], 1, 2]
-    bk2 = [6, 7, "♞", ["k","v"], 1, 2]
-    arr.append(wk)
-    arr.append(wk2)
-    arr.append(bk)
-    arr.append(bk2)
-
-def place_bishops(arr):
-
-    wb = [2, 0, "♗", ["d"], 7, 1]
-    wb2 = [5, 0, "♗", ["d"], 7, 1]
-    bb = [2, 7, "♝", ["d"], 7, 2]
-    bb2 = [5, 7, "♝", ["d"], 7, 2]
-    arr.append(wb)
-    arr.append(wb2)
-    arr.append(bb)
-    arr.append(bb2)
-
-def place_queens(arr):
-    wq = [3, 0, "♕", ["h", "v", "d"], 7, 1]
-    bq = [3, 7, "♛", ["h", "v", "d"], 7, 2]
-    arr.append(wq)
-    arr.append(bq)
-
-def place_kings(arr):
-    wk = [4, 0, "♔", ["h", "v", "d"], 1, 1]
-    bk = [4, 7, "♚", ["h", "v", "d"], 1, 2]
-    arr.append(wk)
-    arr.append(bk)
 
 def is_square_free(x, y, arr, moving_piece):
     for piece in arr:
@@ -100,29 +73,6 @@ def is_square_free(x, y, arr, moving_piece):
             return 0
     return 1
 
-def how_far_x(start_pos, end_pos):
-    if start_pos[1] == end_pos[1]:
-        nb_of_steps = abs(start_pos[0] - end_pos[0])
-        return nb_of_steps
-    else:
-        return 0
-
-def how_far_y(start_pos, end_pos):
-    if end_pos[0] == start_pos[0]:
-        nb_of_steps = abs(start_pos[1] - end_pos[1])
-        return nb_of_steps
-    else:
-        return 0
-
-def how_far_diagonal(start_pos, end_pos):
-    x_compare = abs(start_pos[0] - end_pos[0])
-    y_compare = abs(start_pos[1] - end_pos[1])
-    if x_compare == y_compare:
-        nb_of_steps = x_compare
-        return nb_of_steps
-    else:
-        return 0
-
 def is_knight_move(start_pos, end_pos):
     if abs(start_pos[0] - end_pos[0]) == 1:
         if abs(start_pos[1] - end_pos[1]) == 2:
@@ -135,12 +85,12 @@ def is_knight_move(start_pos, end_pos):
 def what_trajectory(start_pos, end_pos):
     if is_knight_move(start_pos, end_pos):
         return("k", 1)
-    if how_far_x(start_pos, end_pos):
-        return ("h", how_far_x(start_pos, end_pos))
-    if how_far_y(start_pos, end_pos):
-        return ("v", how_far_y(start_pos, end_pos))
-    if how_far_diagonal(start_pos, end_pos):
-        return ("d", how_far_diagonal(start_pos, end_pos))
+    if how_far.horizontaly(start_pos, end_pos):
+        return ("h", how_far.horizontaly(start_pos, end_pos))
+    if how_far.verticaly(start_pos, end_pos):
+        return ("v", how_far.verticaly(start_pos, end_pos))
+    if how_far.diagonaly(start_pos, end_pos):
+        return ("d", how_far.diagonaly(start_pos, end_pos))
     return "not a move"
 
 def is_way_free(start_pos, end_pos, arr):
@@ -168,24 +118,14 @@ def is_way_free(start_pos, end_pos, arr):
             piece_coords = []
             piece_coords.append(piece[0])
             piece_coords.append(piece[1])
-            if how_far_diagonal(piece_coords, start_pos) and how_far_diagonal(piece_coords, end_pos) and piece[0] > smallest_x and piece[0] < biggest_x:
+            if how_far.diagonaly(piece_coords, start_pos) and how_far.diagonaly(piece_coords, end_pos) and piece[0] > smallest_x and piece[0] < biggest_x:
                 print("diagonal not free")
                 print(f"piece captures {piece[2]}")
                 return 0
         return 1
 
 
-bd = create_board()
-
-piece_arr = []
-place_pawns(piece_arr)
-place_queens(piece_arr)
-place_rooks(piece_arr)
-place_knights(piece_arr)
-place_bishops(piece_arr)
-place_kings(piece_arr)
-
-def get_command():
+def get_command(): # Checks for conformity of user input with expected args
     while True:
         move = input("Move it")
         if len(move) != 4:
@@ -210,52 +150,73 @@ def get_command():
         break
     return(move)
 
+
+bd = create_board()
+
+piece_arr = []
+place_piece.place_pieces(piece_arr)
+
+
 while True:
+    w_score = count_score(dead_white_pieces)
+    b_score = count_score(dead_black_pieces)
+    score = compare_scores(w_score, b_score)
+    print(f"{score[0]} Captured white pieces: {' '.join(dead_white_pieces)}")
+
     display_board(bd, piece_arr)
 
+    print(f"{score[1]} Captured black pieces: {' '.join(dead_black_pieces)}")
+
     move = get_command()
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system('cls' if os.name == 'nt' else 'clear') # Clears terminal before displaying board again
 
 
-    start_x = ord(move[0]) - ord('a')
+    start_x = ord(move[0]) - ord('a')                # ex: h8h1 --> 7 7 7 0
     start_y = int(move[1]) - 1
     end_x = ord(move[2]) - ord('a')
     end_y = int(move[3]) - 1
 
-    start_pos = (start_x, start_y)
-    end_pos = (end_x, end_y)
+    start_pos = (start_x, start_y)                   # (7, 7)
+    end_pos = (end_x, end_y)                         # (7, 0)
+
 
     for piece in piece_arr:
-        if piece[0] == start_x and piece[1] == start_y: # checks if a piece is on start square
-            if is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘" or piece[2] == "♞" : #checks if trajectory is free or piece = k
-                if what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]: # checks if the piece can move in such a way
-                    if is_square_free(end_x, end_y, piece_arr, piece):  # checks if the end square is free
-                        if piece[2] == "♙":
-                            if end_y > start_y:
-                                piece[0] = end_x
-                                piece[1] = end_y
-                                piece[4] = 1
-                                print(piece)
-                                if end_y == 7:
-                                    piece_arr.remove(piece)
-                                    piece = [end_x, end_y, "♕", ["h", "v", "d"], 7, 1]
-                                    piece_arr.append(piece)
-                            else:
-                                break
-                        if piece[2] == "♟":
-                            if end_y < start_y:
-                                piece[0] = end_x
-                                piece[1] = end_y
-                                piece[4] = 1
-                                if end_y == 0:
-                                    piece_arr.remove(piece)
-                                    piece = [end_x, end_y, "♛", ["h", "v", "d"], 7, 2]
-                                    piece_arr.append(piece)
-                            else:
-                                break
-                        piece[0] = end_x
-                        piece[1] = end_y
-                else:
-                    print("that piece does not move like that, or that far")
-    print(f"White cemetery: {' '.join(dead_white_pieces)}\nBlack cemetery: {' '.join(dead_black_pieces)}")
+        if not (piece[0] == start_x and piece[1] == start_y): # if the piece is not on start square
+            continue                                          # it won't be the one we want to move
+        if not(is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘" or piece[2] == "♞"):
+            continue                                          # if trajectory is not free and piece is not knight
+
+        # Compares piece's allowed movements, to kind of trajectory
+        if not (what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]):
+            print("that piece does not move like that, or that far")
+            continue
+
+        if not (is_square_free(end_x, end_y, piece_arr, piece)):  # checks if the end square is free
+            continue
+
+        if piece[2] == "♙":
+            if end_y > start_y:                 # White pawns can only move downwards
+                piece[0] = end_x
+                piece[1] = end_y
+                piece[4] = 1                    # Pawns can move 2 squares on first move only, range then becomes 1
+                if end_y == 7:                  # Promotion!
+                    piece_arr.remove(piece)
+                    piece = [end_x, end_y, "♕", ["h", "v", "d"], 7, 1]
+                    piece_arr.append(piece)
+
+        if piece[2] == "♟":
+            if end_y < start_y:                 # Black pawns can only move downwards
+                piece[0] = end_x
+                piece[1] = end_y
+                piece[4] = 1                    # Pawns can move 2 squares on first move only, range then becomes 1
+                if end_y == 0:                  # Promotion!
+                    piece_arr.remove(piece)
+                    piece = [end_x, end_y, "♛", ["h", "v", "d"], 7, 2]
+                    piece_arr.append(piece)
+
+        piece[0] = end_x                        # If all the conditions match, move the piece
+        piece[1] = end_y
+
+
+    
 
