@@ -85,12 +85,12 @@ def is_knight_move(start_pos, end_pos):
 def what_trajectory(start_pos, end_pos):
     if is_knight_move(start_pos, end_pos):
         return("k", 1)
-    if how_far.horizontaly(start_pos, end_pos):
-        return ("h", how_far.horizontaly(start_pos, end_pos))
-    if how_far.verticaly(start_pos, end_pos):
-        return ("v", how_far.verticaly(start_pos, end_pos))
-    if how_far.diagonaly(start_pos, end_pos):
-        return ("d", how_far.diagonaly(start_pos, end_pos))
+    if how_far.horizontally(start_pos, end_pos):
+        return ("h", how_far.horizontally(start_pos, end_pos))
+    if how_far.vertically(start_pos, end_pos):
+        return ("v", how_far.vertically(start_pos, end_pos))
+    if how_far.diagonally(start_pos, end_pos):
+        return ("d", how_far.diagonally(start_pos, end_pos))
     return "not a move"
 
 def is_way_free(start_pos, end_pos, arr):
@@ -118,7 +118,7 @@ def is_way_free(start_pos, end_pos, arr):
             piece_coords = []
             piece_coords.append(piece[0])
             piece_coords.append(piece[1])
-            if how_far.diagonaly(piece_coords, start_pos) and how_far.diagonaly(piece_coords, end_pos) and piece[0] > smallest_x and piece[0] < biggest_x:
+            if how_far.diagonally(piece_coords, start_pos) and how_far.diagonally(piece_coords, end_pos) and piece[0] > smallest_x and piece[0] < biggest_x:
                 print("diagonal not free")
                 print(f"piece captures {piece[2]}")
                 return 0
