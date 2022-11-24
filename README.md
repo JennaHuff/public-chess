@@ -1,41 +1,45 @@
 # public-chess
 
-...
-interpreter les chaines de caracteres pour identifier les mouvements format: "Nd1xc3"
+To do:
 
-Je peux afficher un damier
-Je veux afficher un pion sur le damier
-Je peux deplacer un pion
-Je veux deplacer 2 pions de camp opposé
-...
-
-je peux jouer aux echecs
-
-
-les pions peuvent manger a la verticale
+pawns can take vertically
 
 pawns can only promote to queens
 
-elements in a not in b
-    go in list aa
-elements in b not in a
-    go in list bb
+scores should count the difference between total pieces, not just taken pieces
 
-ex:
-a = [1, 2, 3]
-b = [3, 4, 5]
-aa = [1, 2]
-bb = [4, 5]
+when prompted to pick a piece to promote to, input is not guarded
 
-sum aa
-sum bb
+a king in check should blink red
+cannot move any piece when in check, unless the piece is the king or the piece
 
-compare sums (9 - 3 = 6)
-print(f"black: {bb} {+6} white: {aa}")
+players should take turns playing
+handle inputs such as "Nd1xc3", or "e4"
 
-1, 2, 3
-3, 3, 4, 5
+# def is_free_or_can_take(x, y, arr, moving_piece):
+#     for piece in arr:
+#         if piece[0] == x and piece[1] == y:         #   Checks if the piece is on the destination square
+#             if piece[5] != moving_piece[5]:         #   Checks if the piece is of the same color
+#                 print(f"{moving_piece[2]} takes {piece[2]}")
+#                 if piece[5] == 1:                   # 1 == white
+#                     dead_white_pieces.append(piece[2])
+#                 else:
+#                     dead_black_pieces.append(piece[2])
+#                 arr.remove(piece)
+#                 return 1
+#             return 0
+#     return 1
 
-bb == 3, 4, 5
-
-
+# def is_free_or_can_take(x, y, arr, moving_piece):  # 0 == occupied, 1 == free, 2 == take-able
+#     for piece in arr:
+#         if piece[0] == x and piece[1] == y:         #   Checks if the piece is on the destination square
+#             if piece[5] != moving_piece[5]:         #   Checks if the piece is of the same color
+#                 print(f"{moving_piece[2]} takes {piece[2]}")
+#                 if piece[5] == 1:                   # 1 == white
+#                     dead_white_pieces.append(piece[2])
+#                 else:
+#                     dead_black_pieces.append(piece[2])
+#                 return 2                            # piece occupies the square but can be taken
+#             else:
+#                 return 0
+#     return 1

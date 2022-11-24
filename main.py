@@ -4,7 +4,6 @@ import place_piece
 import how_far
 
 
-
 dead_white_pieces = []
 dead_black_pieces = []
 
@@ -58,20 +57,15 @@ def compare_scores(num_1, num_2):
     else:
         return "  ", f"+{num_2 - num_1}"
 
-
-def is_square_free(x, y, arr, moving_piece):
-    for piece in arr:
-        if piece[0] == x and piece[1] == y:
-            if piece[5] != moving_piece[5]:
-                print(f"{moving_piece[2]} takes {piece[2]}")
-                if piece[5] == 1:
-                    dead_white_pieces.append(piece[2])
-                else:
-                    dead_black_pieces.append(piece[2])
-                arr.remove(piece)
-                return 1
-            return 0
-    return 1
+def is_free(x, y, arr, moving_piece):               # we consider a square occupied by an ennmy piece as free (returns 2)
+    for index, piece in enumerate(arr):
+        if piece[0] == x and piece[1] == y:         #   Checks if the piece is on the destination square
+            if piece[5] != moving_piece[5]:         #   Checks if the piece is of the same color
+                return (2, index)
+            else:
+                print("square is occupied by one of your pieces")
+                return (0, 0)
+    return (1, 0)                                        #free of any piece
 
 def is_knight_move(start_pos, end_pos):
     if abs(start_pos[0] - end_pos[0]) == 1:
@@ -124,6 +118,15 @@ def is_way_free(start_pos, end_pos, arr):
                 return 0
         return 1
 
+def pawn_promotes(piece, end_x):
+    print("1 = queen, 2 = rook, 3 = knight, 4 = bishop")
+    #choice = input("What do you wish to promote your pawn to?")
+    if piece[5] == 1:                                                   # if pawn is white
+        piece = [end_x, 7, "♕", ["h", "v", "d"], 7, 1]
+    else:                                                               # if pawn isn't white
+        piece = [end_x, 0, "♛", ["h", "v", "d"], 7, 1]
+
+    return piece
 
 def get_command(): # Checks for conformity of user input with expected args
     while True:
@@ -183,40 +186,38 @@ while True:
     for piece in piece_arr:
         if not (piece[0] == start_x and piece[1] == start_y): # if the piece is not on start square
             continue                                          # it won't be the one we want to move
+
         if not(is_way_free(start_pos, end_pos, piece_arr) or piece[2] == "♘" or piece[2] == "♞"):
             continue                                          # if trajectory is not free and piece is not knight
 
-        # Compares piece's allowed movements, to kind of trajectory
         if not (what_trajectory(start_pos, end_pos)[0] in piece[3] and what_trajectory(start_pos, end_pos)[1] <= piece[4]):
             print("that piece does not move like that, or that far")
+            continue                                   # Compares piece's allowed movements, to kind of trajectory and range
+
+        if not (is_free(end_x, end_y, piece_arr, piece)[0]):  # checks if the end square is free of any piece of mine
             continue
 
-        if not (is_square_free(end_x, end_y, piece_arr, piece)):  # checks if the end square is free
+        if piece[2] == '♙' or piece[2] == '♟':
+            if is_free(end_x, end_y, piece_arr, piece)[0] == 1:
+                if end_y == 7 or end_y == 0:
+                    new_piece = pawn_promotes(piece, end_x)
+                    piece_arr.remove(piece)
+                    piece_arr.append(new_piece)
+                piece[0] = end_x                        # If all the conditions match, move the piece
+                piece[1] = end_y
+                piece[4] = 1
+            
             continue
 
-        if piece[2] == "♙":
-            if end_y > start_y:                 # White pawns can only move downwards
-                piece[0] = end_x
-                piece[1] = end_y
-                piece[4] = 1                    # Pawns can move 2 squares on first move only, range then becomes 1
-                if end_y == 7:                  # Promotion!
-                    piece_arr.remove(piece)
-                    piece = [end_x, end_y, "♕", ["h", "v", "d"], 7, 1]
-                    piece_arr.append(piece)
-
-        if piece[2] == "♟":
-            if end_y < start_y:                 # Black pawns can only move downwards
-                piece[0] = end_x
-                piece[1] = end_y
-                piece[4] = 1                    # Pawns can move 2 squares on first move only, range then becomes 1
-                if end_y == 0:                  # Promotion!
-                    piece_arr.remove(piece)
-                    piece = [end_x, end_y, "♛", ["h", "v", "d"], 7, 2]
-                    piece_arr.append(piece)
+        if is_free(end_x, end_y, piece_arr, piece)[0] == 2:
+            piece_on_end_square = piece_arr[is_free(end_x, end_y, piece_arr, piece)[1]]
+            print(f"{piece[2]} takes {piece_on_end_square[2]}")
+            if piece_on_end_square[5] == 1:                   # 1 == white
+                dead_white_pieces.append(piece_on_end_square[2])
+            else:
+                dead_black_pieces.append(piece_on_end_square[2])
+            piece_arr.remove(piece_on_end_square)
 
         piece[0] = end_x                        # If all the conditions match, move the piece
         piece[1] = end_y
-
-
-    
-
+        break
