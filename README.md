@@ -1,9 +1,11 @@
 # public-chess
 
-Plays in terminal
 
-This is a work in (halted) progress. It was meant to be a chess game.
+This is an old unfinished chess game in Python
 
+Playing chess in a terminal taught me that web browsers are a good UI option
+
+-----
 To do:
 
 pawns can take vertically
